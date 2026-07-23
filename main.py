@@ -32,6 +32,15 @@ def main():
         result = run_problem1(Path(data_dir), Path(output_dir))
 
         print(f"Output saved to: {result['output_dir']}")
+    elif args.problem == 2:
+        from src.problems.problem2 import solve_problem2
+
+        data_dir = args.data_dir or "problem2/附件2(Attachment 2)"
+        output_dir = args.output_dir or "outputs/problem2"
+        result = solve_problem2(Path(data_dir), Path(output_dir))
+
+        print(f"k* = {result['k_star']}, MSE = {result['mse']:.6f}, CR = {result['comp_ratio']:.2f}")
+        print(f"Output saved to: {result['output_dir']}")
     else:
         print(f"Problem {args.problem} is not implemented yet.")
 
