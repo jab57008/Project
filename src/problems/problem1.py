@@ -28,6 +28,7 @@ def run_problem1(
     # 2. 拟合
     model = LinearRegression(fit_intercept=True)
     model.fit(A, y)
+    assert model.coef_ is not None  # 断言了fit后coef_一定不为None，以应对pylance类型检查
     y_pred = model.predict(A)
     resid = metrics.residuals(y, y_pred)
 
@@ -68,16 +69,16 @@ def run_problem1(
         "拟合结果",
         ["指标", "数值"],
         [
-            ["R²", r2],
-            ["Adjusted R²", adj_r2],
-            ["RMSE", rmse],
-            ["MAE", mae],
-            ["MSE (噪声方差估计)", mse],
-            ["偏置 b", model.intercept_],
-            ["权重均值", float(np.mean(model.coef_))],
-            ["权重标准差", float(np.std(model.coef_, ddof=1))],
-            ["权重最小值", float(np.min(model.coef_))],
-            ["权重最大值", float(np.max(model.coef_))],
+            ["R²", str(r2)],
+            ["Adjusted R²", str(adj_r2)],
+            ["RMSE", str(rmse)],
+            ["MAE", str(mae)],
+            ["MSE (噪声方差估计)", str(mse)],
+            ["偏置 b", str(model.intercept_)],
+            ["权重均值", str(float(np.mean(model.coef_)))],
+            ["权重标准差", str(float(np.std(model.coef_, ddof=1)))],
+            ["权重最小值", str(float(np.min(model.coef_)))],
+            ["权重最大值", str(float(np.max(model.coef_)))],
         ],
     )
 
