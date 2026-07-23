@@ -74,8 +74,8 @@ def _make_plots(s, total_var, records, residuals, mse_final, col_r2, k_star, out
     fig, ax = plt.subplots(figsize=(8, 4))
     ax.bar(range(1, 16), s[:15]**2/total_var*100, color="steelblue")
     ax.axvline(k_star, color="red", linestyle="--")
-    ax.set_xlabel("主成分序号"); ax.set_ylabel("方差解释比(%)")
-    ax.set_title("碎石图"); fig.tight_layout(); fig.savefig(out/"scree.png", dpi=150); plt.close(fig)
+    ax.set_xlabel("Principal Component"); ax.set_ylabel("Variance Explained (%)")
+    ax.set_title("Scree Plot"); fig.tight_layout(); fig.savefig(out/"scree.png", dpi=150); plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(8, 4))
     ax.plot(ks, mses, "o-", color="steelblue")
@@ -86,19 +86,19 @@ def _make_plots(s, total_var, records, residuals, mse_final, col_r2, k_star, out
     fig, ax = plt.subplots(figsize=(8, 4))
     ax.plot(ks, crs, "s-", color="darkorange")
     ax.axvline(k_star, color="green", linestyle="--")
-    ax.set_xlabel("k"); ax.set_ylabel("压缩比"); ax.set_title("压缩比 vs k")
+    ax.set_xlabel("k"); ax.set_ylabel("Compression Ratio"); ax.set_title("Compression Ratio vs k")
     fig.tight_layout(); fig.savefig(out/"cr_vs_k.png", dpi=150); plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(8, 4))
     ax.hist(residuals, bins=60, density=True, alpha=0.7, color="gray", edgecolor="black")
     ax.axvline(0, color="red", linestyle="--")
-    ax.set_xlabel("还原误差"); ax.set_title(f"残差分布 k={k_star} MSE={mse_final:.6f}")
+    ax.set_xlabel("Reconstruction Error"); ax.set_title(f"Residual Distribution k={k_star} MSE={mse_final:.6f}")
     fig.tight_layout(); fig.savefig(out/"residual_hist.png", dpi=150); plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(10, 4))
     ax.bar(range(1, len(col_r2)+1), col_r2, color="steelblue")
     ax.axhline(np.mean(col_r2), color="red", linestyle="--")
-    ax.set_xlabel("列序号"); ax.set_ylabel("R²"); ax.set_title("逐列还原 R²")
+    ax.set_xlabel("Column Index"); ax.set_ylabel("R²"); ax.set_title("Column-wise R²")
     fig.tight_layout(); fig.savefig(out/"col_r2.png", dpi=150); plt.close(fig)
     plt.close("all")
 
