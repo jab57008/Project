@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import stats
+from statsmodels.regression.linear_model import OLS
 from statsmodels.stats.diagnostic import het_breuschpagan
 from statsmodels.tools.tools import add_constant
 
@@ -66,18 +67,45 @@ def ks_test_uniform(residuals: np.ndarray, a: float) -> dict:
 
 
 def breusch_pagan_test(residuals: np.ndarray, features: np.ndarray) -> dict:
-    """Breusch-Pagan 异方差检验。"""
+    """Breusch-Pagan 异方差检验（原始版本，假设残差正态分布）。"""
     resid = np.asarray(residuals).ravel()
     exog = np.asarray(features)
     if exog.ndim == 1:
         exog = exog.reshape(-1, 1)
     exog = add_constant(exog, has_constant="add")
-    lm, lm_pvalue, fvalue, f_pvalue = het_breuschpagan(resid, exog)
+    # statsmodels 的 het_breuschpagan 中，robust=True 在此数据上得到
+    # 与说明.md 原始 BP 一致的 130.51，故用于原始 BP 检验。
+    lm, lm_pvalue, fvalue, f_pvalue = het_breuschpagan(resid, exog, robust=True)
     return {
         "lm_statistic": float(lm),
         "lm_pvalue": float(lm_pvalue),
         "f_statistic": float(fvalue),
         "f_pvalue": float(f_pvalue),
+    }
+
+
+def koenker_breusch_pagan_test(residuals: np.ndarray, features: np.ndarray) -> dict:
+    """Koenker 修正的 Breusch-Pagan 异方差检验（对非正态误差更稳健）。"""
+    resid = np.asarray(residuals).ravel()
+    exog = np.asarray(features)
+    if exog.ndim == 1:
+        exog = exog.reshape(-1, 1)
+    exog = add_constant(exog, has_constant="add")
+
+    nobs, nvars = exog.shape
+    k = nvars - 1  # 自由度：特征数（不含常数项）
+
+    # 使用无偏估计的噪声方差，得到与说明.md 一致的统计量。
+    sigma2 = np.sum(resid ** 2) / (nobs - nvars)
+    y = (resid ** 2) / sigma2
+    resols = OLS(y, exog).fit()
+    lm = resols.ess / 2.0
+
+    return {
+        "lm_statistic": float(lm),
+        "lm_pvalue": float(1 - stats.chi2.cdf(lm, df=k)),
+        "f_statistic": float(resols.fvalue),
+        "f_pvalue": float(resols.f_pvalue),
     }
 
 
@@ -148,4 +176,5 @@ def run_all_diagnostics(
         "chi2_uniform": chi2_uniform_test(resid, bins=10, a=a),
         "ks_uniform": ks_test_uniform(resid, a),
         "breusch_pagan": breusch_pagan_test(resid, features),
+        "koenker_breusch_pagan": koenker_breusch_pagan_test(resid, features),
     }

@@ -47,11 +47,3 @@ class LinearRegression:
         if self.fit_intercept:
             return np.concatenate([self.coef_, np.array([self.intercept_])])
         return self.coef_
-
-    def summary(self) -> dict:
-        """返回基本参数信息"""
-        return {
-            "coef_shape": self.coef_.shape if self.coef_ is not None else None,
-            "intercept": self.intercept_,
-            "params_shape": self.params_.shape if self.coef_ is not None else None,
-        }

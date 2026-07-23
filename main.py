@@ -31,10 +31,6 @@ def main():
         output_dir = args.output_dir or "outputs/problem1"
         result = run_problem1(Path(data_dir), Path(output_dir))
 
-        print("Problem 1 completed successfully.")
-        print("Metrics:")
-        for k, v in result["metrics"].items():
-            print(f"  {k}: {v:.6f}")
         print(f"Output saved to: {result['output_dir']}")
     else:
         print(f"Problem {args.problem} is not implemented yet.")
